@@ -1,9 +1,29 @@
 // components/Layout.tsx
+"use client";
 import React from "react";
 
 import Link from "next/link";
 
- function Navbar() {
+function Navbar() {
+  const handleLogout = async () => {
+  try {
+    const res = await fetch('/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+    });
+
+    const data = await res.json();
+    if (res.ok && data.message === 'Logout successful') {
+      window.location.href = '/'; // redirect to login page
+    } else {
+      console.error('Logout failed:', data.message);
+    }
+  } catch (err) {
+    console.error('Logout error', err);
+  }
+};
+
+
   return (
     <div className="navbar bg-base-200 shadow-md">
       <div className="flex-1">
@@ -18,9 +38,12 @@ import Link from "next/link";
         <Link href="/results" className="btn btn-ghost">
           Scan Results
         </Link>
-        <Link href="/api/auth/signout" className="btn btn-ghost">
+        <button
+          onClick={handleLogout}
+          className="btn btn-ghost"
+        >
           Signout
-        </Link>
+        </button>
       </div>
     </div>
   );
